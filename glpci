@@ -1,0 +1,321 @@
+présentation glpi ocs
+glpi
+
+Solution open-­source de gestion de parc informatique et de servicedesk, GLPI est une application Full Web pour gérer l’ensemble de vos problématiques de gestion de parc informatique :
+de la gestion de l’inventaire des composantes matérielles ou logicielles d’un parc informatique à la gestion de l’assistance aux (…)
+glpi est disponible en 45 langues, il dispose d’un système d’authentification multiple(local, LDAP, AD, Pop/Imap, CAS, x509…) et multi-serveurs.
+il intègre un système de notifications sur les différents événements (stock de consommables, expiration de contrats et de licences), personnalisables et par entité
+OCS
+
+Open Computers and Software Inventory Next Generation est une solution de gestion technique de parc informatique. Grace à un agent installé sur les ordinateurs et serveurs a monitorer il permet de récupérer des information matériels, logiciels sur ces machines. IL permet aussi de déployer des installations de logiciels ou d’exécuter des scripts et commandes sur les ordinateurs sans surcharger le réseau (Système évolué de télédiffusion).
+Installation
+prérequis
+
+La dernière version glpi n’est pas compatible avec certain plugin ( plugin pour centreon … ). l’installation sur Debian wheezy est instable à cause de depense de paquet
+Pour cette installation nous allons utiliser
+
+glpi version inférieur ou égal à 0.72.2
+
+OS debian 6
+GlPI
+
+GLPI se déploie dans un environnement LAMP ou WAMP il faut donc installer les paquets nécessaire.
+
+aptitude install apache2 mysql-server-5.0 php5-mysql php5-gd
+
+sécurisation de la base de donnee
+
+ mysql_secure_installation 
+
+repondre par no a la premiere question puis par yes aux autres questions Redémarrer apache2
+
+/etc/init.d/apache2 restart 
+
+Créez la base de données et un user avec les droits pour GLPI :
+
+myslql -u root -p 
+create database base_de_donnes_glpi;
+create user utilisateur_glpi@'localhost' identified by 'mot_de_passe';
+grant all on base_de_donnes_glpi.* to utilisateur_glpi@‘localhost’;
+flush privileges;
+quit;
+
+Allez dans le dossier www d’Apache et téléchargez la dernière version de GLPI :
+
+cd /var/www/wget https://forge.indepnet.net/attachments/download/593/glpi-0.72.2.tar.gz —no-check-certificate
+
+Décompressez l’archive
+
+tar xvzf glpi-0.72.2.tar.gz
+
+Donnez les droits à Apache sur le dossier GLPI
+
+chown -R www-data /var/www/glpi
+
+Vous pouvez supprimer le fichier qui n’est plus nécessaire
+
+rm glpi-0.78.2.tar.gz
+
+Installez certains modules et librairies pour PHP et Apache nécessaires à GLPI pour fonctionner
+
+aptitude install libapache2-mod-php5 libapache2-mod-perl2
+aptitude install libxml-simple-perl libcompress-zlib-perl
+aptitude install libdbi-perl libdbd-mysql-perl
+aptitude install libnet-ip-perl libphp-pclzip make
+aptitude install libapache-dbi-perl
+
+Installez des paquet via perl
+
+perl -MCPAN -e 'install XML::Entities'
+perl -MCPAN -e 'install SOAP::Lite'
+
+Redémarrez le service apache
+
+/etc/init.d/apache2 restart 
+
+Avec votre navigateur, saisissez l’adresse suivante
+
+http://adresse_de_votre_serveur/glpi/
+
+Choisissez la langue
+https://projets.smile.ci/attachments/download/352/debut.png
+
+Acceptez les conditions d’utilisation
+https://projets.smile.ci/attachments/download/347/licence.png
+
+Choisissez “installation” pour une première installation toute fraiche
+https://projets.smile.ci/attachments/download/344/debut.png
+
+GLPI vérifie s’il a tout ce dont il besoin pour fonctionner correctement. Si tout est vert, cliquez sur « Continue »
+https://projets.smile.ci/attachments/download/342/accus.png
+
+Entrez l’adresse du serveur (dans notre cas en localhost), le nom d’utilisateur et le mot de passe que vous avez créé auparavant sur MySQL puis cliquez sur « Continue »
+https://projets.smile.ci/attachments/download/348/mysql.png
+
+Sélectionnez la base de données créée avec MySQL puis cliquez sur « Continue »
+https://projets.smile.ci/attachments/download/349/setup.png
+
+Tout s’est bien passé. Cliquez sur « Continue » :
+https://projets.smile.ci/attachments/download/350/step.png
+
+Un dernier récapitulatif avant de cliquez sur « Use GLPI » et de passer à la fenêtre suivante pour se connecter :
+https://projets.smile.ci/attachments/download/351/step_4.png
+
+Voici enfin l’interface de gestion de GLPI en mode administrateur
+https://projets.smile.ci/attachments/download/343/administateur.png
+OCS
+
+Allez dans le dossier www d’Apache
+
+cd /var/www 
+
+Téléchargez la dernière version d’ocs vous trouverai en piece jointe le fichier tar.gz.
+
+wget http://www.ocsinventory-ng.org/en/download/register-download-ocs-inventory-ng-server-for-unix.html
+ou
+wget http://launchpad.net/ocsinventory-server/stable-2.0/2.0rc2/+download/OCSNG_UNIX_SERVER-2.0rc2.tar.gz --no-check-certificate
+
+Décompressez l’archive.
+
+tar xzf OCSNG_UNIX_SERVER-2.0rc2.tar.gz
+
+Supprimez le fichier si vous le souhaitez.
+
+rm OCSNG_UNIX_SERVER-2.0rc2.tar.gz
+
+Aller dans le dossier nouvellement crée pour OCSIventory.
+
+cd OCSNG_UNIX_SERVER-2.0rc2
+
+Exécutez le script qui fera l’installation automatique d’OCS. Parce que la procédure est longue et pas particulièrement passionnante (surtout pour ne pas dire que c’est long à taper), vous avez juste à suivre la procédure en validant chaque étape avec les paramètres par défaut. NB le point “.” avant le “./setup” fait partir de la commande
+
+. ./setup.sh
+
+A la fin de la procédure, un petit message apparaîtra en stipulant que tout s’est bien passé et que vous pouvez profitez d’OCS. Il est possible, qu’à la fin de cette étape, le script exécuté vous déconnecte de votre session. Ne jetez pas votre machine, ce n’est pas grave reconnectez-vous en root et tout de suite la suite en redémarrant le service Apache.
+
+/etc/init.d/apache2 restart
+
+Créez la base de données et un user avec les droits pour OCS:
+
+mysql -u root  -p
+create database base_de_donnes_ocs;
+create user utilisateur_ocs@'localhost' identified by 'mot_de_passe';
+grant all on base_de_donnes_ocs.* to utilisateur_ocs@'localhost';
+flush privileges;
+quit;
+
+Avec votre navigateur, saisissez l’adresse suivante
+
+http://adresse_de_votre_serveur/ocsreports/
+
+Entrez votre login, votre de mot de passe, le nom de la base pour OCS et où se situe le serveur (dans notre cas toujours en localhost) :
+https://projets.smile.ci/attachments/download/353/ocs1.png
+
+A cette étape, cliquez uniquement sur « Envoyer »
+https://projets.smile.ci/attachments/download/354/ocs2.png
+
+Alors voici une série de messages pas véritablement amicaux. C’est pas grave, nous allons les corriger tout de suite.
+https://projets.smile.ci/attachments/download/355/ocs-3.png
+
+Donc si comme dans notre exemple, vous ne pouvez pas vous connecter, gardez votre calme, ce problème est connu de nos services. Allez dans le fichier de conf pour la connexion d’OCS à la base de données :
+
+vi /usr/share/ocsinventory-reports/ocsreports/dbconfig.inc.php
+
+En fait, il s’agit tout simplement de rentrer manuellement dans les fichiers de conf les données indispensables à OCS pour se connecter à MySQL et utiliser sa propre base de données créée par vos soins quelques étapes plus tôt. Modifiez selon vos paramètres, le nom de la base, le user et le mot de passe :
+
+<?php define("DB_NAME", "base_de_donnes_ocs");
+define("SERVER_READ","localhost");
+define("SERVER_WRITE","localhost");
+define("COMPTE_BASE","utilisateur_ocs");
+define("PSWD_BASE","mot_de_passe"); ?>
+
+Ouvrez le fichier suivant
+
+/etc/apache2/conf.d/z-ocsinventory-server.conf
+
+Et modifiez à nouveau selon les paramètres de connexion selon votre nom de base de données, votre login et votre mot de passe :
+
+# Master Database settings
+# Replace localhost by hostname or ip of MySQL server for WRITE
+PerlSetEnv OCS_DB_HOST localhost
+# Replace 3306 by port where running MySQL server, generally 3306
+PerlSetEnv OCS_DB_PORT 3306
+# Name of database
+PerlSetEnv OCS_DB_NAME base_de_donnes_ocs
+PerlSetEnv OCS_DB_LOCAL base_de_donnes_ocs
+# User allowed to connect to database
+PerlSetEnv OCS_DB_USER utilisateur_ocs
+# Password for user
+PerlSetVar OCS_DB_PWD mot_de_passe
+
+Supprimez le fichier d’installation pour pouvoir se connecter directement à l’interface de connexion :
+
+rm /usr/share/ocsinventory-reports/ocsreports/install.php
+
+Essayez à nouveau ( toujours avec l’adresse du type suivant : http://adresse_de_votre_serveur/ocsreports/), entrez le login et le mot de passe par défaut : admin et admin :
+https://projets.smile.ci/attachments/download/356/ocs4.png
+Couplage OCS
+
+Depuis la version 0.6.1 de glpi l’association glpi ocs se fait grace au plugins ocs qu’on installe sur glpi
+installation du plugin
+
+ls plugins sont disponible sur le site
+http://plugins.glpi-project.org/spip.php?mot33&lang=fr
+
+Téléchagez le plugins
+
+cd /home
+wget https://forge.indepnet.net/attachments/download/1564/glpi-ocsinventoryng-1.0.2.tar.gz
+</pre> 
+
+Décompressez le fichier
+
+tar xzf glpi-ocsinventoryng-1.0.2.tar.gz
+
+Déplacer le dossier décompressez vers le glpli/plugins
+
+mv ocsinventoryng /var/www/glpi/plugins
+
+Redémarrez apache et rafraîchissez votre page web
+
+/etc/init.d/apache2 restart
+
+Configuration du plugin
+
+Depuis l’interface de glpi
+cliquer sur Configuration>Plugins*https://projets.smile.ci/attachments/download/363/pluginglpi.png
+Ensuite cliquez sur le bouton installer https://projets.smile.ci/attachments/download/364/instalerglpi.png</s>
+Puis cliquez sur le bouton Activerhttps://projets.smile.ci/attachments/download/365/activation.png
+le plugins est installer et activer
+Cliquez sur plugins>ocsinventoryng
+https://projets.smile.ci/attachments/download/366/38.png
+cliquer sur configuration serveur*
+Remplissez les différents champs
+https://projets.smile.ci/attachments/download/368/configurationocsglpi.png
+
+nom: localhost
+hote de la base de donnée l’adresse ip du serveur ocs, localhost si c’est sur le meme serveur que glpi
+Base: nom de la base de donné ocs
+user: utilisateur de la base de donne ocs
+
+cliquez ensuite sur sauvegarder
+
+Enfin revenez à la page plugins ocs inventory pour
+cliquer sur importation de nouveau ordinateur et synchronisation des ordinateurs deja importés
+
+https://projets.smile.ci/attachments/download/369/synchronisationocs.png
+Installation et configuration du client osc Inventory
+Agent Linux
+
+prérequis
+> perl >= 5.8
+> libxml-simple-perl
+> libnet-snmp-perl
+Configuration
+
+création des répertoires pour le stockage des configurations et log du client.
+
+   mkdir -p /etc/ocsinventory-agent
+   mkdir -p /var/lib/ocsinventory-agent
+   mkdir -p /var/log/ocsinventory-agent
+   mkdir -p /var/run
+
+Installation
+
+Télécharger le client qui a la même version que le serveur pour permettre une bonne communication entre le serveur et le client.
+
+   cd /usr/local/src
+   wget https://launchpad.net/ocsinventory-unix-agent/stable-2.0/2.0.5/+download/Ocsinventory-Unix-Agent-2.0.5.tar.gz
+   tar xvzf Ocsinventory-Unix-Agent-2.0.5.tar.gz
+   cd Ocsinventory-Unix-Agent-2.0.5
+   perl Makefile.PL
+   make
+   make install
+
+Rémontez d'information
+
+Remonter des informations du client Linux vers le serveur
+
+  ocsinventory-agent --debug --devlib --server http://@serveur_ocs/ocsinventory
+
+Agent Windows
+Téléchargement
+
+Télécharger le client sur le site http://www.ocsinventory-ng.org/fr/telechargement.
+Installation
+
+Lancer l'executable puis faire : suivant, suivant , terminer tout en renseignant les cases.
+Téledeploiement
+
+Le téledeploiement s’effectue depuis l’interface web de ocs inventory.
+Étape 1 : création du package à téledeployer
+Aller dans l’onglet Téledeployer puis cliquer sur création puis remplir convenablement les champs.
+Utiliser le format .zip pour les package qui seront déployés sur les machines Windows et .tar.gz pour les packages qui seront déployés sur les clients Linux.
+Étape 2  : activation du package.
+Aller dans l’onglet Téledeploiyer puis cliquer sur actication pour activer le package crée.
+Étape 3  : Aller dans l’onglet Toutes les machines puis cliquer sur la machine ou les machines qui sur lesquelles doivent s’effectuées le déploiement.
+lorsque la machine fera l’inventaire de ses ressources au serveur, elle sera notifier par le serveur et elle commencera le téléchargement puis après elle
+installera le logiciel .
+Troubleshooting
+
+activer le mode https pour permettre au client de telecharger le fichier info.
+
+root# cd /etc/apache2/sites-available
+:/etc/apache2/sites-available# a2enmod ssl 
+:/etc/apache2/sites-available# a2ensite default-ssl 
+:/etc/apache2/sites-available# service apache2 reload
+
+augmenter la taille des paquets a uploader.
+
+vim /etc/apache2/conf.d/ocsinventory-reports.conf
+php_value post_max_size         5000m   
+php_value upload_max_filesize   5008m
+
+vim /etc/php5/apache2/php.ini
+File_uploads = on 
+upload_max_filesize = 200M
+post_max_size = 201M 
+memory_limit = 500M
+max_execution_time = -1 
+max_input_time = -1
+
